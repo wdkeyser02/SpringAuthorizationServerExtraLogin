@@ -54,8 +54,7 @@ public class SecurityConfig {
 	private final MyUserDetailsService myUserDetailsService;
 	private final AuthenticationConfiguration authenticationConfiguration;
 	
-	public SecurityConfig(MyUserDetailsService myUserDetailsService, 
-			AuthenticationConfiguration authenticationConfiguration) {
+	public SecurityConfig(MyUserDetailsService myUserDetailsService, AuthenticationConfiguration authenticationConfiguration) {
 		this.myUserDetailsService = myUserDetailsService;
 		this.authenticationConfiguration = authenticationConfiguration;
 	}
