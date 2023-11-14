@@ -26,7 +26,7 @@ public class MyUserDetailsService implements UserDetailsService {
 		return users.stream()
 				.filter(user -> user.getUsername().equals(username))
 				.findAny()
-				.orElseThrow(() -> new BadCredentialsException("ERROR"));
+				.orElseThrow(() -> new BadCredentialsException("User not found!"));
 	}
 
 }

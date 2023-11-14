@@ -52,9 +52,12 @@ import com.nimbusds.jose.proc.SecurityContext;
 public class SecurityConfig {
 
 	private final MyUserDetailsService myUserDetailsService;
+	private final AuthenticationConfiguration authenticationConfiguration;
 	
-	public SecurityConfig(MyUserDetailsService myUserDetailsService) {
+	public SecurityConfig(MyUserDetailsService myUserDetailsService, 
+			AuthenticationConfiguration authenticationConfiguration) {
 		this.myUserDetailsService = myUserDetailsService;
+		this.authenticationConfiguration = authenticationConfiguration;
 	}
 
 	@Bean 
@@ -79,7 +82,7 @@ public class SecurityConfig {
 
 	@Bean 
 	@Order(2)
-	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration)
+	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
 			throws Exception {
 		http
 			.addFilter(filter(authenticationConfiguration))
