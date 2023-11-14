@@ -12,14 +12,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
@@ -35,7 +34,6 @@ import org.springframework.security.oauth2.server.authorization.settings.Authori
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -75,7 +73,7 @@ public class SecurityConfig {
 
 	@Bean 
 	@Order(2)
-	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration)
+	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration, MyUserDetailsService myUserDetailsService)
 			throws Exception {
 		http
 			.addFilter(filter(authenticationConfiguration))
@@ -83,7 +81,7 @@ public class SecurityConfig {
 					.requestMatchers("/login").permitAll()
 					.anyRequest().authenticated()
 			)
-			.authenticationProvider(authProvider());
+			.authenticationProvider(new MyUserDetailsAuthenticationProvider(passwordEncoder(), myUserDetailsService));
 		return http.build();
 	}
 
@@ -97,19 +95,11 @@ public class SecurityConfig {
 		return filter;
 	}
 	
-	private AuthenticationProvider authProvider() {
-	    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-	    provider.setUserDetailsService(inMemoryUserDetailsManager());
-	    return provider;
-	}
-	
 	@Bean
-	InMemoryUserDetailsManager inMemoryUserDetailsManager() {
-		var user1 = User.withUsername("user").password("{noop}password").roles("USER").build();
-		var user2 = User.withUsername("admin").password("{noop}password").roles("USER", "ADMIN").build();
-		return new InMemoryUserDetailsManager(user1, user2);
+	PasswordEncoder passwordEncoder() {
+		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 	}
-	
+		
 	@Bean 
 	RegisteredClientRepository registeredClientRepository() {
 		RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())

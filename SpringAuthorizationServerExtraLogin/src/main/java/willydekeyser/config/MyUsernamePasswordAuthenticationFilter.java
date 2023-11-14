@@ -2,7 +2,6 @@ package willydekeyser.config;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -46,10 +45,8 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
         if (test == null) {
             test = "";
         }
-        if (!test.equals("TEST")) {
-        	throw new BadCredentialsException("Test not found!");
-		}
-        return new UsernamePasswordAuthenticationToken(username, password);     
+        
+        return new MyUsernamePasswordAuthenticationToken(username, password, test);     
         
     }
 
