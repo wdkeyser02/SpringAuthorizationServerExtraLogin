@@ -21,7 +21,6 @@ public class MyUsernamePasswordAuthenticationToken extends UsernamePasswordAuthe
         Collection<? extends GrantedAuthority> authorities) {
         super(principal, credentials, authorities);
         this.test = test;
-        //super.setAuthenticated(true);
     }
 
     public String getTest() {
