@@ -4,9 +4,10 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import willydekeyser.user.User;
 
 @Component
 public class MyUserDetailsAuthenticationProvider implements AuthenticationProvider {
@@ -24,12 +25,16 @@ public class MyUserDetailsAuthenticationProvider implements AuthenticationProvid
 		
 		String username = authentication.getName();
         String password = String.valueOf(authentication.getCredentials());
+        String test = ((MyUsernamePasswordAuthenticationToken) authentication).getTest();
         User user = (User) myUserDetailsService.loadUserByUsername(username);
         
-        if(!passwordEncoder.matches(password, user.getPassword())) {
+        if (!user.enabled()) {
+        	throw new BadCredentialsException("User not found!");
+		}
+        if(!passwordEncoder.matches(password, user.password())) {
         	throw new BadCredentialsException("User not found!");
         }
-        if (!((MyUsernamePasswordAuthenticationToken) authentication).getTest().equals("TEST")) {
+        if (!test.equals(user.test())) {
         	throw new BadCredentialsException("User not found!");
 		}
 		return new MyUsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), ((MyUsernamePasswordAuthenticationToken) authentication).getTest(), user.getAuthorities());
