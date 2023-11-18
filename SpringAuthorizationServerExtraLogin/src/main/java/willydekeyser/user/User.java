@@ -15,7 +15,8 @@ public record User(
 		String password,
 		boolean enabled,
 		Collection<? extends GrantedAuthority> authorities,
-		String test) implements UserDetails {
+		String test
+		) implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -174,12 +174,10 @@ public class SecurityConfig {
 						.collect(Collectors.toSet());
 				context.getClaims().claim("authorities", authorities);
 			}
-			
 			if (OidcParameterNames.ID_TOKEN.equals(context.getTokenType().getValue())) {
 				Set<String> authorities = principal.getAuthorities().stream().map(GrantedAuthority::getAuthority)
 						.collect(Collectors.toSet());
 				context.getClaims().claim("authorities", authorities);
-				context.getClaims().claim("details", "Spring Boot Tutorial");
 			}
 		};
 	}
